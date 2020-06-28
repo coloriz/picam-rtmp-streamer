@@ -1,0 +1,44 @@
+user www-data;
+worker_processes auto;
+pid /run/nginx.pid;
+include /etc/nginx/modules-enabled/*.conf;
+
+events {
+  worker_connections 768;
+  # multi_accept on;
+}
+
+http {
+  server {
+    listen ${NGINX_STAT_PORT};
+
+    # This URL provides RTMP statistics in XML
+    location /stat {
+      rtmp_stat all;
+
+      # Use this stylesheet to view XML as web page in browser
+      rtmp_stat_stylesheet stat.xsl;
+    }
+
+    location /stat.xsl {
+      # XML stylesheet to view RTMP stats
+      root /usr/share/nginx/html/;
+    }
+  }
+}
+
+rtmp {
+  server {
+    listen 1935;
+    chunk_size 4096;
+
+    application live {
+      live on;
+      record off;
+
+      # publish only from specific client
+      allow publish ${RTMP_ALLOW_PUBLISH};
+      deny publish all;
+    }
+  }
+}

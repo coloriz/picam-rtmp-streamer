@@ -1,0 +1,34 @@
+version: '3'
+services:
+  rtmp-server:
+    build: ./nginx-rtmp
+    image: rtmp-server
+    networks:
+      - gateway
+    environment:
+      - RTMP_ALLOW_PUBLISH=172.21.0.1/24
+    ports:
+      - "1935:1935"
+      - "8080:8080"
+  camera-streamer:
+    build: ./debian-ffmpeg
+    image: camera-streamer
+    networks:
+      - gateway
+    restart: on-failure
+    volumes:
+      - /opt/vc/:/opt/vc/:ro
+    environment:
+      - PUBLISHER=rtmp-server
+    devices:
+      - /dev/vchiq
+      - /dev/vcsm
+      - /dev/vcsm-cma
+    depends_on:
+      - rtmp-server
+
+networks:
+  gateway:
+    ipam:
+      config:
+        - subnet: 172.21.0.1/24
