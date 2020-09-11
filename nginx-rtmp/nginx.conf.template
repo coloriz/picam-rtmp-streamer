@@ -31,6 +31,7 @@ rtmp {
   server {
     listen 1935;
     chunk_size ${RTMP_CHUNK_SIZE};
+    buflen ${RTMP_BUFLEN};
 
     application live {
       live on;
