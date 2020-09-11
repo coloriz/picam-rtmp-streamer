@@ -17,5 +17,5 @@ ENV PORT=1935
 ENV APP=live
 ENV PUBLISH_KEY=camera
 
-CMD raspivid -b $BITRATE -t 0 -fps $FPS --intra $INTRA_REFRESH_PERIOD --inline -w $FRAME_WIDTH -h $FRAME_HEIGHT -o - -v -n | \
+CMD raspivid -b $BITRATE -t 0 -fps $FPS --intra $INTRA_REFRESH_PERIOD --inline --flush -w $FRAME_WIDTH -h $FRAME_HEIGHT -o - -v -n | \
     ffmpeg -hide_banner -use_wallclock_as_timestamps 1 -framerate $FPS -i - -c:v copy -an -f flv rtmp://$PUBLISHER:$PORT/$APP/$PUBLISH_KEY
