@@ -30,7 +30,7 @@ http {
 rtmp {
   server {
     listen 1935;
-    chunk_size 4096;
+    chunk_size ${RTMP_CHUNK_SIZE};
 
     application live {
       live on;
